@@ -1,2 +1,0 @@
-[06-May-2025 18:06:37 UTC] PHP Warning:  file_get_contents(../config/connect.php): Failed to open stream: No such file or directory in /home/wypdudu25kt4/public_html/crm.hojoapp.com/test_connection.php on line 42
-[06-May-2025 18:12:57 UTC] PHP Warning:  file_get_contents(../config/connect.php): Failed to open stream: No such file or directory in /home/wypdudu25kt4/public_html/crm.hojoapp.com/test_connection.php on line 42
