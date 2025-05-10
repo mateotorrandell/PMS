@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMS - Mapa de Reservas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Mapa de Reservas (Gantt)</h1>
+
+    <div class="controls">
+        <button id="prev-week" title="Semana Anterior (-7 días)">« Semana</button>
+        <button id="prev-day" title="Día Anterior (-1 día)">‹ Día</button>
+        <input type="date" id="date-picker" title="Seleccionar Fecha Inicio">
+        <button id="today" title="Ir a Hoy">Hoy</button>
+        <button id="next-day" title="Día Siguiente (+1 día)">Día ›</button>
+        <button id="next-week" title="Semana Siguiente (+7 días)">Semana »</button>
+    </div>
+
+    <div id="gantt-container" class="gantt-container">
+        <div id="gantt-grid" class="gantt-grid">
+             </div>
+    </div>
+
+    <div id="reservation-modal" class="modal folio-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <span class="modal-close-btn" title="Cerrar">&times;</span>
+            
+            <div class="folio-header">
+                <h2 class="folio-title">Folio de Cuenta</h2>
+                <div class="folio-actions">
+                    <button id="btn-otros-cargos">Otros Cargos</button>
+                    <button id="btn-pagos">Pagos</button>
+                    <button id="btn-resumen" disabled>Resumen de Cuenta</button>
+                </div>
+            </div>
+
+            <table class="folio-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Departamento</th>
+                        <th>Detalle</th>
+                        <th>Recibo</th>
+                        <th>Factura</th>
+                        <th>Débito</th>
+                        <th>Pago</th>
+                        <th>Saldo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="folio-items">
+                    <!-- Los items se cargarán dinámicamente -->
+                </tbody>
+            </table>
+
+            <div class="folio-totales">
+                <div>Total Débitos: <span class="total-debito" id="total-debito">$0.00</span></div>
+                <div>Total Pagos: <span class="total-credito" id="total-credito">$0.00</span></div>
+                <div class="saldo-final">Saldo Final: <span id="saldo-final">$0.00</span></div>
+            </div>
+
+            <form id="reservation-form" novalidate>
+                <input type="hidden" id="res-id" name="id"> 
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Número Reserva:</label>
+                        <span id="res-numero" class="readonly-field">Generado Automáticamente</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-nombre">Nombre:</label>
+                        <input type="text" id="res-nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-apellido">Apellido:</label>
+                        <input type="text" id="res-apellido" name="apellido" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-dni">DNI/Documento:</label>
+                        <input type="text" id="res-dni" name="dni">
+                    </div>
+                    <div class="form-group">
+                        <label for="res-telefono">Teléfono:</label>
+                        <input type="tel" id="res-telefono" name="telefono">
+                    </div>
+                    <div class="form-group">
+                        <label for="res-email">Email:</label>
+                        <input type="email" id="res-email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="res-patente">Patente Vehículo:</label>
+                        <input type="text" id="res-patente" name="patente">
+                    </div>
+                    <div class="form-group">
+                        <label for="res-numero-hab-select">Habitación Nro:</label>
+                        <select id="res-numero-hab-select" name="numero_habitacion" required>
+                            <option value="" disabled selected>Cargando...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo Habitación:</label>
+                        <input type="text" id="res-tipo-hab-display" name="tipo_habitacion_display" class="readonly-field" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-checkin">Fecha Ingreso:</label>
+                        <input type="date" id="res-checkin" name="checkin" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-checkout">Fecha Salida:</label>
+                        <input type="date" id="res-checkout" name="checkout" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Noches:</label>
+                        <span id="res-noches" class="readonly-field">0</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-estado">Estado Reserva:</label>
+                        <select id="res-estado" name="estado" required>
+                            <option value="pendiente" selected>Pendiente</option>
+                            <option value="confirmada">Confirmada</option>
+                            <option value="cancelada">Cancelada</option>
+                            <option value="checkin">Check-In</option>
+                            <option value="checkout">Check-Out</option>
+                            <option value="noshow">No Show</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-canal">Canal Venta:</label>
+                        <select id="res-canal" name="canal">
+                            <option value="directo" selected>Directo</option>
+                            <option value="agencia">Agencia</option>
+                            <option value="plataforma">Plataforma Externa</option>
+                            <option value="telefono">Teléfono</option>
+                            <option value="email">Email</option>
+                            <option value="mostrador">Mostrador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-hora-in">Hora Ingreso:</label>
+                        <input type="time" id="res-hora-in" name="hora_ingreso" value="14:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="res-hora-out">Hora Salida:</label>
+                        <input type="time" id="res-hora-out" name="hora_salida" value="11:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="res-tipo-venta">Tipo Venta:</label>
+                        <select id="res-tipo-venta" name="tipo_venta">
+                            <option value="rack" selected>Rack</option>
+                            <option value="promo">Promo</option>
+                            <option value="empresa">Empresa</option>
+                            <option value="convenio">Convenio</option>
+                            <option value="ota">OTA</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-adultos">Adultos:</label>
+                        <input type="number" id="res-adultos" name="adultos" min="1" value="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-menores">Menores:</label>
+                        <input type="number" id="res-menores" name="menores" min="0" value="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-precio">Precio Total (ARS):</label>
+                        <input type="number" id="res-precio" name="precio" step="0.01" min="0" placeholder="0.00">
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label for="res-comentario">Comentario:</label>
+                        <textarea id="res-comentario" name="comentario" rows="2"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Añadido: Elemento para mostrar errores -->
+                <div id="reservation-form-error" class="form-error-message" style="display:none; color:red; margin-top:15px; padding:10px; background-color:#ffeeee; border-radius:4px;"></div>
+                
+                <div class="form-actions">
+                    <button type="submit" id="save-reservation-btn">Guardar Reserva</button>
+                    <button type="button" id="btn-show-folio" class="secondary-btn">Folio</button>
+                    <button type="button" id="cancel-reservation-btn" class="modal-close-btn-alternative">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Nuevo Modal para Folio -->
+    <div id="folio-modal" class="modal folio-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <span class="modal-close-btn" title="Cerrar">&times;</span>
+            
+            <div class="folio-header">
+                <h2 class="folio-title">Folio de Cuenta</h2>
+                <div class="folio-info">
+                    <span>Reserva: <strong id="folio-reserva-numero">-</strong></span>
+                    <span>Huésped: <strong id="folio-huesped-nombre">-</strong></span>
+                </div>
+                <div class="folio-actions">
+                    <button id="btn-otros-cargos">Otros Cargos</button>
+                    <button id="btn-pagos">Pagos</button>
+                    <button id="btn-resumen" disabled>Resumen de Cuenta</button>
+                </div>
+            </div>
+
+            <table class="folio-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Departamento</th>
+                        <th>Detalle</th>
+                        <th>Recibo</th>
+                        <th>Factura</th>
+                        <th>Débito</th>
+                        <th>Pago</th>
+                        <th>Saldo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="folio-items">
+                    <!-- Los items se cargarán dinámicamente -->
+                </tbody>
+            </table>
+
+            <div class="folio-totales">
+                <div>Total Débitos: <span class="total-debito" id="total-debito">$0.00</span></div>
+                <div>Total Pagos: <span class="total-credito" id="total-credito">$0.00</span></div>
+                <div class="saldo-final">Saldo Final: <span id="saldo-final">$0.00</span></div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

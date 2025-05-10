@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Opciones de Reserva</title>
+    <link rel="stylesheet" href="style.css"> </head>
+<body>
+    <div class="container options-container"> <h1>Configuración de Opciones de Reserva</h1>
+
+        <section class="option-section">
+            <h2>Tipos de Venta</h2>
+            <form id="form-sale_types" class="option-form" novalidate>
+                <input type="hidden" name="type" value="sale_types"> <div class="form-group">
+                    <label for="name-sale_types">Nuevo Tipo:</label>
+                    <input type="text" id="name-sale_types" name="nombre" placeholder="Ej: Tarifa Web" required>
+                </div>
+                <button type="submit">Añadir</button>
+            </form>
+            <ul id="list-sale_types" class="option-list"><li>Cargando...</li></ul>
+            <div id="error-sale_types" class="section-error-message"></div> </section>
+
+        <section class="option-section">
+            <h2>Canales de Venta</h2>
+            <form id="form-channels" class="option-form" novalidate>
+                <input type="hidden" name="type" value="channels">
+                 <div class="form-group">
+                    <label for="name-channels">Nuevo Canal:</label>
+                    <input type="text" id="name-channels" name="nombre" placeholder="Ej: WhatsApp" required>
+                </div>
+                <button type="submit">Añadir</button>
+            </form>
+            <ul id="list-channels" class="option-list"><li>Cargando...</li></ul>
+             <div id="error-channels" class="section-error-message"></div>
+        </section>
+
+        <section class="option-section">
+            <h2>Estados de Reserva</h2>
+            <form id="form-statuses" class="option-form" novalidate>
+                <input type="hidden" name="type" value="statuses">
+                 <div class="form-group">
+                    <label for="name-statuses">Nuevo Estado:</label>
+                    <input type="text" id="name-statuses" name="nombre" placeholder="Ej: Pendiente Pago" required>
+                </div>
+                <div class="form-group form-group-color">
+                    <label for="color-statuses">Color:</label>
+                    <input type="color" id="color-statuses" name="color" value="#cccccc" required> </div>
+                <button type="submit">Añadir</button>
+            </form>
+            <ul id="list-statuses" class="option-list"><li>Cargando...</li></ul>
+             <div id="error-statuses" class="section-error-message"></div>
+        </section>
+
+        <a href="index.html" class="back-link">‹ Volver al Mapa de Reservas</a>
+         <br>
+         <a href="configuracion.html" class="back-link">‹ Ir a Configuración de Habitaciones</a>
+    </div>
+
+    <script type="module" src="js/configuracion_opciones.js"></script>
+</body>
+</html>

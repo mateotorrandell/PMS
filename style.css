@@ -1,0 +1,837 @@
+/* style.css - Estilos Generales y del Gantt */
+
+/* --- Reset Básico y Fuentes --- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* Un gris muy claro para el fondo */
+    color: #333;
+    line-height: 1.5;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #444;
+    margin-bottom: 1.5rem; /* Espacio debajo de títulos */
+}
+h1 {
+    margin-top: 1rem;
+}
+
+/* --- Controles de Navegación (index.html) --- */
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* Para que quepan en pantallas pequeñas */
+    gap: 10px; /* Espacio entre botones */
+    padding: 15px;
+    background-color: #e9ecef; /* Fondo gris claro para la barra de controles */
+    border-bottom: 1px solid #dee2e6; /* Línea sutil debajo */
+    margin-bottom: 20px; /* Espacio antes del Gantt */
+}
+
+.controls button,
+.controls input[type="date"] {
+    padding: 8px 15px;
+    font-size: 14px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.controls input[type="date"] {
+    min-width: 140px; /* Ancho mínimo para fecha */
+}
+
+.controls button:hover {
+    background-color: #f1f3f5;
+    border-color: #adb5bd;
+}
+.controls button:active {
+    background-color: #dee2e6;
+}
+.controls button#today {
+    font-weight: bold;
+    color: #007bff; /* Color distintivo para 'Hoy' */
+    border-color: #007bff;
+}
+.controls button#today:hover {
+    background-color: #e7f3ff;
+}
+
+
+/* --- Estilos del Gantt (index.html) --- */
+.gantt-container {
+    width: 95%; /* Ocupa casi todo el ancho */
+    max-width: 1600px; /* Ancho máximo para evitar que sea demasiado grande */
+    margin: 0 auto; /* Centrado */
+    overflow-x: auto; /* Scroll horizontal si el contenido excede el ancho */
+    border: 1px solid #ccc;
+    background-color: #fff; /* Fondo blanco para el área del grid */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra suave */
+}
+
+.gantt-grid {
+    display: grid;
+    border-collapse: collapse; /* Similar a table */
+    min-width: fit-content; /* Asegura que el grid se expanda al contenido */
+}
+
+.grid-cell {
+    border-right: 1px solid #e0e0e0; /* Línea vertical suave */
+    border-bottom: 1px solid #e0e0e0; /* Línea horizontal suave */
+    padding: 5px; /* Padding base */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex; /* Usar flex para alinear contenido */
+    align-items: center; /* Centrado vertical */
+    justify-content: center; /* Centrado horizontal */
+    font-size: 13px; /* Tamaño de fuente base */
+    position: relative; /* Para posicionar reservas encima */
+}
+
+/* Estilos específicos para Cabeceras */
+.header-corner,
+.date-header,
+.room-header {
+    background-color: #f2f2f2; /* Fondo gris claro para cabeceras */
+    font-weight: bold;
+    position: sticky; /* Cabeceras pegajosas */
+    z-index: 10; /* Encima de las celdas del cuerpo */
+}
+
+.header-corner {
+    top: 0;
+    left: 0;
+    z-index: 20; /* Encima de ambas cabeceras */
+    border-color: #bbb; /* Borde más oscuro */
+    justify-content: center;
+}
+
+.date-header {
+    top: 0; /* Pegajoso arriba */
+    border-color: #ccc;
+    min-width: var(--cell-width, 50px); /* Ancho mínimo desde config */
+    text-align: center;
+    font-size: 12px;
+    padding: 8px 5px;
+}
+
+.room-header {
+    left: 0; /* Pegajoso a la izquierda */
+    border-color: #ccc;
+    text-align: left;
+    justify-content: flex-start; /* Alinear texto a la izquierda */
+    padding-left: 10px;
+    padding-right: 10px;
+    /* El color de fondo se aplica dinámicamente */
+    color: #333; /* Color de texto por defecto (puede necesitar ajuste por contraste) */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05); /* Sombra sutil a la derecha */
+}
+
+/* Estilos para Celdas del Cuerpo */
+.body-cell {
+    background-color: #fff;
+    cursor: pointer; /* Indica que se puede hacer clic */
+    transition: background-color 0.15s ease; /* Efecto hover suave */
+}
+
+.body-cell:hover {
+    background-color: #eef7ff; /* Azul muy claro al pasar el ratón */
+}
+
+/* Mensaje cuando no hay habitaciones */
+.full-width-message {
+    border: none; /* Sin bordes */
+    font-style: italic;
+    color: #6c757d; /* Gris */
+    background-color: #f8f9fa; /* Fondo muy claro */
+}
+
+/* --- Estilos de Reservas (Sobre el Gantt) --- */
+.reservation-bar {
+    position: absolute;
+    top: 5px; /* Espacio desde arriba */
+    bottom: 5px; /* Espacio desde abajo */
+    left: 2px; /* Pequeño margen izquierdo */
+    right: 2px; /* Pequeño margen derecho */
+    background-color: #28a745; /* Verde por defecto (confirmada) */
+    color: white;
+    border-radius: 4px;
+    z-index: 5; /* Encima de la celda base, debajo de cabeceras sticky */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 0 8px; /* Padding interno */
+    font-size: 11px;
+    cursor: move; /* O pointer si solo es para abrir modal */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+}
+.reservation-bar:hover {
+    opacity: 0.9;
+}
+/* Colores según estado (ejemplos) */
+.reservation-bar[data-status="pendiente"] { background-color: #ffc107; color: #333; } /* Amarillo */
+.reservation-bar[data-status="confirmada"] { background-color: #28a745; } /* Verde */
+.reservation-bar[data-status="checkin"] { background-color: #007bff; } /* Azul */
+.reservation-bar[data-status="checkout"] { background-color: #6c757d; } /* Gris */
+.reservation-bar[data-status="cancelada"] { background-color: #dc3545; text-decoration: line-through; } /* Rojo */
+.reservation-bar[data-status="noshow"] { background-color: #343a40; } /* Negro */
+
+.reservation-bar span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* --- Estilos del Modal (index.html y otros) --- */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.modal-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1001;
+    cursor: pointer;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: 3% auto; /* Ajustado para menor margen superior */
+    padding: 20px 25px; /* Ajustado */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 85%;
+    max-width: 800px; /* Ajustado */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
+    max-height: 85vh; /* Ajustado */
+    overflow-y: auto; /* Scroll interno si el contenido excede */
+}
+
+.modal-close-btn,
+.modal-close-btn-alternative { /* Estilo unificado para botones de cierre */
+    cursor: pointer;
+}
+.modal-close-btn { /* El 'x' en la esquina */
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 0 5px;
+    background: none; /* Sin fondo */
+    border: none; /* Sin borde */
+}
+.modal-close-btn:hover,
+.modal-close-btn:focus {
+    color: #333;
+    text-decoration: none;
+}
+
+.modal h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: #333;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    font-size: 1.5em;
+}
+
+/* Estilos del Formulario dentro del Modal */
+#reservation-form .form-grid {
+    display: grid;
+    /* Ajustar columnas: mínimo 280px, máximo 1 fracción del espacio */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px 25px; /* Espacio vertical y horizontal */
+    margin-bottom: 20px;
+}
+
+#reservation-form .form-group {
+    display: flex;
+    flex-direction: column; /* Label arriba, input abajo */
+}
+
+#reservation-form .form-group-full {
+    grid-column: 1 / -1; /* Ocupa todo el ancho del grid */
+}
+
+#reservation-form label {
+    margin-bottom: 6px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #555;
+}
+
+#reservation-form input[type="text"],
+#reservation-form input[type="tel"],
+#reservation-form input[type="email"],
+#reservation-form input[type="date"],
+#reservation-form input[type="time"],
+#reservation-form input[type="number"],
+#reservation-form select,
+#reservation-form textarea {
+    width: 100%; /* Ocupar todo el ancho del contenedor del form-group */
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Padding incluido en el width */
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#reservation-form input:focus,
+#reservation-form select:focus,
+#reservation-form textarea:focus {
+    border-color: #007bff; /* Azul al enfocar */
+    outline: none; /* Quitar outline por defecto */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Sombra suave azul */
+}
+
+#reservation-form textarea {
+    resize: vertical; /* Permitir redimensionar solo verticalmente */
+    min-height: 60px;
+}
+
+#reservation-form .readonly-field {
+    display: block;
+    padding: 10px 12px;
+    background-color: #e9ecef; /* Fondo gris claro para campos no editables */
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #495057;
+    min-height: 40px; /* Alinear altura con inputs */
+    box-sizing: border-box;
+    line-height: 1.4; /* Ajustar para centrado vertical del texto */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Acciones del formulario (botones Guardar/Cancelar) */
+#reservation-form .form-actions {
+    display: flex;
+    justify-content: flex-end; /* Botones a la derecha */
+    gap: 10px; /* Espacio entre botones */
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee; /* Línea separadora arriba */
+}
+
+#reservation-form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+#reservation-form #save-reservation-btn {
+    background-color: #28a745; /* Verde */
+    color: white;
+}
+#reservation-form #save-reservation-btn:disabled {
+    background-color: #cccccc; /* Gris cuando deshabilitado */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+#reservation-form .modal-close-btn-alternative { /* Botón Cancelar */
+    background-color: #6c757d; /* Gris oscuro */
+    color: white;
+}
+#reservation-form .modal-close-btn-alternative:hover {
+     background-color: #5a6268; /* Gris más oscuro al pasar el ratón */
+}
+
+#reservation-form #save-reservation-btn:not(:disabled):hover {
+     background-color: #218838; /* Verde más oscuro al pasar el ratón */
+}
+
+
+/* --- Estilos Específicos para configuracion.html --- */
+.config-container { /* Contenedor principal en configuracion.html */
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+#add-room-form { /* Formulario de añadir habitación */
+    display: flex;
+    flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
+    gap: 15px; /* Espacio entre elementos del form */
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    align-items: flex-end; /* Alinear base de inputs y botón */
+}
+#add-room-form .form-group { /* Contenedor de label+input */
+     flex: 1 1 150px; /* Crecer, encoger, base de 150px */
+     min-width: 150px; /* Ancho mínimo antes de envolver */
+}
+#add-room-form .form-group-color { /* Contenedor específico para color */
+     flex: 0 0 80px; /* No crecer, no encoger, ancho fijo */
+}
+#add-room-form label { /* Etiquetas del form */
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #555;
+}
+#add-room-form input[type="number"],
+#add-room-form input[type="text"],
+#add-room-form input[type="color"] { /* Inputs del form */
+    width: 100%; /* Ocupar todo el ancho del form-group */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+#add-room-form input[type="color"] { /* Input de color */
+    height: 40px; /* Misma altura que otros inputs */
+    padding: 5px;
+    cursor: pointer;
+}
+#add-room-form button { /* Botón de añadir */
+    padding: 10px 20px;
+    background-color: #007bff; /* Azul */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    height: 40px; /* Misma altura que inputs */
+    align-self: flex-end; /* Alinear con la base de los inputs */
+    transition: background-color 0.2s ease;
+}
+#add-room-form button:hover {
+    background-color: #0056b3; /* Azul más oscuro */
+}
+
+.error-message { /* Mensaje de error (ej: número duplicado) */
+    color: #dc3545; /* Rojo */
+    font-size: 12px;
+    margin-top: 5px;
+    display: none; /* Oculto hasta que se necesite */
+}
+
+#room-list { /* Lista de habitaciones existentes */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 400px; /* Altura máxima con scroll si hay muchas habitaciones */
+    overflow-y: auto; /* Scroll vertical */
+    border: 1px solid #eee; /* Borde alrededor de la lista */
+    border-radius: 4px;
+}
+#room-list li { /* Cada elemento de la lista */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee; /* Separador entre elementos */
+    background-color: #fff;
+}
+#room-list li:last-child {
+    border-bottom: none; /* Sin borde en el último */
+}
+#room-list li:nth-child(even) {
+     background-color: #f9f9f9; /* Fondo alterno suave */
+}
+#room-list .room-info { /* Contenedor de info (color, número, nombre) */
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espacio entre elementos de info */
+    flex-grow: 1; /* Ocupar espacio disponible */
+    overflow: hidden; /* Evitar que el contenido se desborde */
+}
+#room-list .room-color-swatch { /* Muestra de color */
+    width: 25px;
+    height: 25px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex-shrink: 0; /* Evitar que se encoja */
+}
+ #room-list .room-number { /* Número de habitación */
+     font-weight: bold;
+     min-width: 40px; /* Ancho mínimo */
+     text-align: right; /* Alinear a la derecha */
+     flex-shrink: 0;
+ }
+ #room-list .room-name { /* Nombre de habitación */
+     color: #555;
+     white-space: nowrap; /* Evitar saltos de línea */
+     overflow: hidden;
+     text-overflow: ellipsis; /* Puntos suspensivos si es muy largo */
+ }
+#room-list .room-actions button { /* Botón de borrar */
+    background: none;
+    border: none;
+    color: #dc3545; /* Rojo */
+    cursor: pointer;
+    font-size: 18px; /* Tamaño del icono 'x' */
+    padding: 5px;
+    line-height: 1; /* Ajustar altura de línea */
+    transition: color 0.2s ease;
+}
+#room-list .room-actions button:hover {
+     color: #a71d2a; /* Rojo más oscuro */
+}
+
+.back-link { /* Enlace para volver al Gantt */
+    display: block;
+    text-align: center;
+    margin-top: 30px;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+}
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* --- Estilos para configuracion_opciones.html --- */
+.options-container {
+    max-width: 1000px; /* Un poco más ancho para las secciones */
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.option-section {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+.option-section:last-child {
+    margin-bottom: 10px;
+    border-bottom: none;
+}
+
+.option-section h2 {
+    text-align: left;
+    font-size: 1.4em;
+    color: #0056b3; /* Azul para destacar secciones */
+    margin-bottom: 20px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+    display: inline-block; /* Para que el borde no ocupe todo */
+}
+
+.option-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: flex-end;
+}
+.option-form .form-group {
+    flex: 1 1 auto; /* Ocupa espacio */
+}
+.option-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #555;
+}
+.option-form input[type="text"],
+.option-form input[type="color"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.option-form input[type="color"] {
+    height: 40px;
+    padding: 4px; /* Menos padding para el color */
+    min-width: 60px; /* Ancho mínimo */
+}
+.option-form .form-group-color {
+    flex: 0 0 80px; /* Ancho fijo para color */
+}
+.option-form button {
+    padding: 10px 15px;
+    background-color: #28a745; /* Verde para añadir */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    height: 40px;
+    align-self: flex-end;
+    transition: background-color 0.2s ease;
+}
+.option-form button:hover {
+    background-color: #218838;
+}
+
+.option-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 250px; /* Altura máxima para listas */
+    overflow-y: auto;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+.option-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+    font-size: 14px;
+}
+.option-list li:last-child {
+    border-bottom: none;
+}
+.option-list li:nth-child(even) {
+     background-color: #f9f9f9;
+}
+.option-list .item-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+    overflow: hidden; /* Para text-overflow */
+}
+.option-list .item-color-swatch {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+.option-list .item-name {
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+}
+.option-list .item-actions button {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 2px 5px;
+    line-height: 1;
+    margin-left: 10px; /* Espacio antes del botón */
+}
+.option-list .item-actions button:hover {
+     color: #a71d2a;
+}
+.reservation-block {
+    /* Hereda posición grid de JS */
+    /* Hereda background-color de JS */
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Borde sutil opcional */
+    border-radius: 4px;
+    box-sizing: border-box; /* Importante si añades padding/border */
+    padding: 3px 5px;
+    font-size: 11px;
+    color: white; /* O elige un color que contraste con tus estados */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4); /* Sombra para legibilidad */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2; /* Encima de las celdas base */
+}
+.reservation-block:hover {
+    opacity: 0.85;
+    box-shadow: 0 0 5px rgba(0,0,0,0.4);
+}
+
+/* Estilos para Modal de Folio */
+.modal.folio-modal {
+    font-size: 14px;
+}
+
+.modal.folio-modal .modal-content {
+    width: 95%;
+    max-width: 1400px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.folio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.folio-info {
+    display: flex;
+    gap: 20px;
+    color: #666;
+}
+
+.folio-title {
+    font-size: 1.5em;
+    color: #333;
+}
+
+.folio-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.folio-actions button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    transition: background-color 0.2s;
+}
+
+.folio-actions button:hover {
+    background-color: #e0e0e0;
+}
+
+.folio-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.folio-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.folio-table th,
+.folio-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.folio-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.folio-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.folio-table td.debito {
+    color: #dc3545;
+}
+
+.folio-table td.credito {
+    color: #28a745;
+}
+
+.folio-table td.saldo {
+    font-weight: 600;
+}
+
+.folio-table .actions {
+    display: flex;
+    gap: 5px;
+}
+
+.folio-table .actions button {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.folio-table .actions .edit {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.folio-table .actions .delete {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.folio-table .actions .transfer {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.folio-totales {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #ddd;
+    text-align: right;
+    font-weight: 600;
+}
+
+.folio-totales .total-debito {
+    color: #dc3545;
+}
+
+.folio-totales .total-credito {
+    color: #28a745;
+}
+
+.folio-totales .saldo-final {
+    font-size: 1.2em;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+
+/* Botón Folio en modal reserva */
+.secondary-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.secondary-btn:hover {
+    background-color: #5a6268;
+}

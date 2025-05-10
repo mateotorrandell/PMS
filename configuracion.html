@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Habitaciones</title>
+    <link rel="stylesheet" href="style.css"> </head>
+<body>
+    <div class="container config-container"> <h1>Configuración de Habitaciones</h1>
+
+        <h2>Añadir Nueva Habitación</h2>
+        <form id="add-room-form">
+            <div class="form-group">
+                <label for="room-number">Número Habitación:</label>
+                <input type="number" id="room-number" name="number" required min="1">
+                <div id="number-error" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="room-name">Nombre / Etiqueta:</label>
+                <input type="text" id="room-name" name="name" required>
+            </div>
+            <div class="form-group form-group-color">
+                <label for="room-color">Color:</label>
+                <input type="color" id="room-color" name="color" value="#e0e0e0" required> </div>
+            <button type="submit">Añadir Habitación</button>
+        </form>
+
+        <h2>Listado de Habitaciones</h2>
+        <ul id="room-list">
+            <li>Cargando habitaciones...</li>
+        </ul>
+
+        <a href="index.html" class="back-link">‹ Volver al Mapa de Reservas</a>
+    </div>
+
+    <script type="module" src="js/configuracion.js"></script>
+</body>
+</html>

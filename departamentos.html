@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Departamentos - PMS</title>
+    <link rel="stylesheet" href="css/departamentos.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gestión de Departamentos</h1>
+            <p>Administre los departamentos para el sistema de folio y cobros</p>
+        </header>
+
+        <div class="content-wrapper">
+            <aside class="sidebar">
+                <div class="form-container">
+                    <h2 id="form-title">Nuevo Departamento</h2>
+                    <form id="departamento-form">
+                        <input type="hidden" id="departamento-id">
+                        
+                        <div class="form-group">
+                            <label for="codigo">Código *</label>
+                            <input type="text" id="codigo" name="codigo" maxlength="10" required 
+                                   placeholder="Ej: ALJ" pattern="[A-Za-z0-9]{1,10}">
+                            <small>Máximo 10 caracteres alfanuméricos</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nombre">Nombre *</label>
+                            <input type="text" id="nombre" name="nombre" maxlength="100" required 
+                                   placeholder="Ej: Alojamiento">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="descripcion">Descripción</label>
+                            <textarea id="descripcion" name="descripcion" rows="3" 
+                                      placeholder="Descripción opcional del departamento"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="departamento-padre">Departamento Padre</label>
+                            <select id="departamento-padre" name="departamento_padre_id">
+                                <option value="">-- Ninguno (Departamento Raíz) --</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="orden">Orden</label>
+                            <input type="number" id="orden" name="orden" min="0" value="0">
+                            <small>Orden de visualización</small>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="activo" name="activo" checked>
+                                Departamento Activo
+                            </label>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" id="save-btn">Guardar</button>
+                            <button type="button" id="cancel-btn">Cancelar</button>
+                        </div>
+                        
+                        <div id="form-error" class="error-message"></div>
+                    </form>
+                </div>
+            </aside>
+            
+            <main class="main-content">
+                <div class="actions-bar">
+                    <button id="new-departamento-btn" class="action-btn">
+                        <span class="icon">+</span> Nuevo Departamento
+                    </button>
+                    <div class="search-container">
+                        <input type="text" id="search-input" placeholder="Buscar departamento...">
+                        <button id="search-btn">Buscar</button>
+                    </div>
+                </div>
+                
+                <div class="departamentos-container">
+                    <div class="loading-indicator" id="loading-indicator">
+                        <div class="spinner"></div>
+                        <p>Cargando departamentos...</p>
+                    </div>
+                    
+                    <div id="departamentos-tree" class="departamentos-tree">
+                        <!-- Aquí se cargarán los departamentos -->
+                    </div>
+                    
+                    <div id="no-results" class="no-results" style="display: none;">
+                        <p>No se encontraron departamentos</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Modal de confirmación -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <h3>Confirmar Eliminación</h3>
+            <p id="confirm-message">¿Está seguro que desea eliminar este departamento?</p>
+            <div class="modal-actions">
+                <button id="confirm-yes" class="danger-btn">Sí, Eliminar</button>
+                <button id="confirm-no">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/departamentos.js"></script>
+</body>
+</html>
